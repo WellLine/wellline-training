@@ -1,0 +1,126 @@
+# TODO:
+#   eventTypeFilters: EventTypeFilterSetInput
+#   geoFilters: GeoFilterSetInput
+#   measureFilters: MeasureFilterSetInput
+#   propertyFilters: PropertyFilterSetInput
+#   quantityFilters: QuantityFilterSetInput
+#   textFilters: TextFilterInput
+#   timeRangeFilters: TimeRangeFilterSetInput
+
+# Simplest TimeLine query to return first 250 events. Requires reader role.
+query simplestTimeLineQuery {
+  timeLineForQuery(tenantId: "equinor", input: {}) {
+    events {
+      event {
+        startedOn
+        content
+      }
+    }
+  }
+}
+
+# Simplest TimeLine query to return latest 250 events. Requires reader role.
+query descendingOrderTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    options: { order: DESC }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+      }
+    }
+  }
+}
+
+# TimeLine query using paging to select which events to return. Requires reader role.
+query pagingTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    options: {
+      pageFrom: 0,
+      pageSize: 3
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject. Requires reader role.
+query singleSubjectTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        subjectEntityIds
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for multiple subjects. Requires reader role.
+query multiSubjectTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [  "well.NO 15/9-F-11", "well.NO 15/9-F-12", "well.NO 15/9-F-14" ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        subjectEntityIds
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with a single entity filter. Requires reader role.
+query singleEntityFilterTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [  "well.NO 15/9-F-12" ]
+    },
+    entityFilters: {
+      entityIds: [ "Equipment.cement hose" ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        referenceEntityIds
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with multiple entity filters. Requires reader role.
+query multiEntityFilterTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [  "well.NO 15/9-F-12" ]
+    },
+    entityFilters: {
+      entityIds: [ "Equipment.cement hose","Action.run in hole" ],
+      mode: AND
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        referenceEntityIds
+      }
+    }
+  }
+}
