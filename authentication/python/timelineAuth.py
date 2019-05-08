@@ -1,3 +1,5 @@
+# (C) 2019 Maana, Inc.
+
 import getpass 
 import requests # pip install requests
 

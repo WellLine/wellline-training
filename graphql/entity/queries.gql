@@ -1,3 +1,5 @@
+# (C) 2019 Maana, Inc.
+
 # Get suggested entities whose id or name begin with a specified prefix
 query suggestEntities {
   suggestEntities(tenantId: "equinor", query: "NO") {
