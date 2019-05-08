@@ -1,9 +1,8 @@
 import { AuthenticationContext, adalFetch, withAdalLogin } from 'react-adal';
 
 // Configuration for Azure AD Tenant and Application
-// TODO: Change these for training cluster
 const tenant = '76648a49-7e8a-4b11-9aed-e3852b2f4295'
-const clientId =  '265fd760-dbc8-4b6f-81bb-056197f24592'
+const clientId =  'e7b90cf0-0783-46bc-aa6f-2869008551b9'
 const redirectUri = 'http://localhost:3000'
 
 export const adalConfig = {

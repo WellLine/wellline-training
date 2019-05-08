@@ -1,5 +1,15 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+It was adapted to provide minimal authentication against WellLine using the following steps:
+
+1. Installing **react-adal**  using the command `npm i react-adal`
+
+2. Adding **adalConfig.js**
+
+3. Editing **index.js** to wrap the App with **runWithAdal** 
+
+3. Editing **App.js** to display authenticated user info and support logout 
+
 ## Available Scripts
 
 In the project directory, you can run:
