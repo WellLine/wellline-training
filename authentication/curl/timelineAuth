@@ -5,17 +5,23 @@
 # <user_id> = User ID you want to authenticate as
 # <password> = User password
 
-# Example to authenticate against WellLine public cloud:
+
+
+# For example, to authenticate against WellLine training cluseter as user@acme.com:
 # curl -X POST https://login.microsoftonline.com/76648a49-7e8a-4b11-9aed-e3852b2f4295/oauth2/v2.0/token \
 #  -H 'Accept: application/json' \
 #  -H 'Content-Type: application/x-www-form-urlencoded' \
 #  -H 'cache-control: no-cache' \
-#  -d 'grant_type=password&client_id=738df55d-a717-443f-9817-bf915be34c8c&scope=https://cloud.wellline.com/user_impersonation&username=user@acme.com&password=pword123'
+#  -d 'grant_type=password&client_id=e7b90cf0-0783-46bc-aa6f-2869008551b9&scope=https://training.wellline.com/user_impersonation&username=user@acme.com&password=pword123'
+
+
 
 curl -X POST https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/token \
-  -H 'Accept: application/json' \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H 'cache-control: no-cache' \
-  -d 'grant_type=password&client_id=<client_id>&scope=<wellline_url>/user_impersonation&username=<user_id>&password=<password>'
+ -H 'Accept: application/json' \
+ -H 'Content-Type: application/x-www-form-urlencoded' \
+ -H 'cache-control: no-cache' \
+ -d 'grant_type=password&client_id=<client_id>&scope=<wellline_url>/user_impersonation&username=<user_id>&password=<password>'
+
+
 
 
