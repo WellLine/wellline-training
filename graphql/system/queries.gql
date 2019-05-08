@@ -1,0 +1,19 @@
+# Get details for a specific tenant. Requires admin role.
+query tenant {
+  tenant(tenantId:"equinor") {
+    id
+    indexInfo {
+      id
+      count
+      bytes
+    }
+  }
+}
+
+# Get details for the current service. Requires admin role.
+query service {
+  serviceInfo {
+    name
+    environment
+  }
+}
