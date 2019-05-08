@@ -1,13 +1,10 @@
 import getpass 
 import requests # pip install requests
 
-# TODO: Remove staging defaults once cloud supports this authentication
-# Default Values for authenticating against WellLine public cloud
+# Default Values for authenticating against WellLine training cluster
 def_tenant_id = "76648a49-7e8a-4b11-9aed-e3852b2f4295"
-# def_client_id = "738df55d-a717-443f-9817-bf915be34c8c"
-# def_wellline_url = "https://cloud.wellline.com"
-def_client_id = "6617ddfd-68f6-4452-8259-e906147e0c25"
-def_wellline_url = "https://staging.wellline.com"
+def_client_id = "e7b90cf0-0783-46bc-aa6f-2869008551b9"
+def_wellline_url = "https://training.wellline.com"
 
 # Templates for the Authentication request
 headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded", "cache-control": "no-cache"}
