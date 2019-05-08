@@ -1,14 +1,5 @@
 # (C) 2019 Maana, Inc.
 
-# TODO:
-#   eventTypeFilters: EventTypeFilterSetInput
-#   geoFilters: GeoFilterSetInput
-#   measureFilters: MeasureFilterSetInput
-#   propertyFilters: PropertyFilterSetInput
-#   quantityFilters: QuantityFilterSetInput
-#   textFilters: TextFilterInput
-#   timeRangeFilters: TimeRangeFilterSetInput
-
 # Simplest TimeLine query to return first 250 events. Requires reader role.
 query simplestTimeLineQuery {
   timeLineForQuery(tenantId: "equinor", input: {}) {
@@ -47,6 +38,23 @@ query pagingTimeLineQuery {
       event {
         startedOn
         content
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a text string. Requires reader role.
+query textTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    textFilters : {
+      query: "schlumberger~"
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        subjectEntityIds
       }
     }
   }
@@ -122,6 +130,131 @@ query multiEntityFilterTimeLineQuery {
         startedOn
         content
         referenceEntityIds
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with multiple time range filters. Requires reader role.
+query multiTimeRangeTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    },
+    timeRangeFilters: {
+      filters: [ {startTime: "2007-01-01", endTime:"2007-01-05", rangeMode: START},
+        {startTime:"2010", endTime: "2011"}]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with multiple event type filters. Requires reader role.
+query multiEventTypeTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    },
+		eventTypeFilters: {
+      eventTypeIds: ["workover - wire line", "workover - rig up/down"]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        type {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with multiple measure filters. Requires reader role.
+query multiMeasureTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    },
+    measureFilters: {
+      mode: AND,
+      filters: [
+        { typeId : "depthMD", minValue: 3000, maxValue: 4000, rangeMode: INC}
+      ],
+      filters: [
+        { typeId : "depthTVD", minValue: 2900}
+      ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        content
+        measures {
+          type {
+            id
+            name
+          }
+          value
+        }
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with geo distance filters. Requires reader role.
+query geoDistanceTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    },
+    geoFilters: {
+      distanceFilters: [
+        {anchor: { lat : 28,  long : -92},  distance : "10km"}
+      ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        startedAt {
+          lat
+          long
+        }
+        content
+      }
+    }
+  }
+}
+
+# TimeLine query to get events for a single subject with geo region filters. Requires reader role.
+query geoRegionTimeLineQuery {
+  timeLineForQuery(tenantId:"equinor", input: {
+    subjectFilters: {
+      entityIds: [ "well.NO 15/9-F-12" ]
+    },
+    geoFilters: {
+      polygonFilters: [
+        {points: [{lat: 25, long: -91}, {lat: 30, long: -91}, {lat: 30, long: -89}, {lat: 25, long: -89}]}
+      ]
+    }
+  }) {
+    events {
+      event {
+        startedOn
+        startedAt {
+          lat
+          long
+        }
+        content
       }
     }
   }
