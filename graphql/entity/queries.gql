@@ -1,0 +1,44 @@
+# Get suggested entities whose id or name begin with a specified prefix
+query suggestEntities {
+  suggestEntities(tenantId: "equinor", query: "NO") {
+    entities {
+      score
+      entity {
+        id
+        name
+      }
+    }
+  }
+}
+
+# Perform text search across all entities
+query searchEntities {
+  searchEntities(tenantId: "equinor", query: "NO") {
+    entities {
+      score
+      entity {
+        id
+        name
+      }
+    }
+  }
+}
+
+# Get a specific entity by ID
+query getEntity {
+  entity(tenantId: "equinor", id: "well.NO 15/9-F-1") {
+    id
+    name
+  }
+}
+
+# Get a set of entities by ID
+query getEntities {
+  entities(
+    tenantId: "equinor"
+    ids: ["well.NO 15/9-F-1", "well.NO 15/9-19 B"]
+  ) {
+    id
+    name
+  }
+}
