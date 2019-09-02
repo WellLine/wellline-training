@@ -70,3 +70,11 @@ module.exports.getEventQuery = gql`
   }
   ${EventDetailsFragment}
 `
+
+module.exports.updateEventMutation = gql`
+  mutation updateEvent($tenantId: ID!, $input: UpdateEventInput!, $eepConfig: EepConfigInput) {
+    updateEvent(tenantId:$tenantId, input:$input, eepConfig:$eepConfig) {
+      status
+    }
+  }
+`
