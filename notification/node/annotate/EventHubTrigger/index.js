@@ -78,7 +78,7 @@ module.exports = async function(context, eventHubMessages) {
         id: srcEvent.id
       }
 
-      property.updateEventTopic(srcEvent, eventUpdate)
+      await property.updateEventLanguage(srcEvent, eventUpdate)
       geo.updateEventLocation(srcEvent, eventUpdate)
 
       // context.log( `Updated event: ${JSON.stringify(eventUpdate, null, 2)}`)  
