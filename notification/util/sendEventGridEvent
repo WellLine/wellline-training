@@ -32,4 +32,35 @@ curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-typ
 }
 '
 
+# Notification Schema is as follows:
+# {
+#   "id":"<notification_id>",
+#   "subject":"/<tenant_id>/<element_type_id>/<element_id>",
+#   "eventType":"<element_type_id>.<notification_type_id",
+#   "data": {
+#     "batchId":"<batch_id>",
+#     "agentId":"<agent_id>"
+#   },
+#   "eventTime":"<notification_time_iso>",
+#   "dataVersion":"1.0",
+#   "metadataVersion":"1",
+#   "topic":"/subscriptions/XXXXXXX/resourceGroups/YYYYYYYY/providers/Microsoft.EventGrid/topics/ZZZZZZ"
+# }
+
+# notification_type_id:
+#   - created, 
+#   - updated, 
+#   - deleted
+
+# element_type_id: 
+#   - Event, 
+#   - EventType, 
+#   - EventTypeGroup,
+#   - Entity,
+#   - EntityType,
+#   - EntityTypeGroup,
+#   - Agent,
+#   - LexiconEntry
+#   - MeasureType
+
 
