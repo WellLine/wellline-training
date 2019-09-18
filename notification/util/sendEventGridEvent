@@ -19,7 +19,7 @@ echo -e "\n${HEADER}Sending EventGrid Event.${NC}"
 curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-type: Notification' -d'
 {
   "id":"b6ee0afd-d594-4d3a-989f-a2837e215e3f",
-  "subject":"/demo/Event/3e44747e58c62c38f20ad70f22e26177",
+  "subject":"/equinor/Event/1a199dc9b657733166201ef19c304696",
   "eventType":"Event.created",
   "data": {
     "batchId":"",
