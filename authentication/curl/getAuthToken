@@ -11,10 +11,16 @@ NC='\033[0m'
 # Need to replace the following placeholders:
 # <AZURE_TENANT_ID> = Azure AD Tenant ID you are authenticating against.
 # <AZURE_AD_APP_ID> = Azure AD Application ID you are authenticating against.
-# <WELLLINE_DNS_NAME> = The DNS name of the WellLine Application.
-AUTH_URL="https://login.microsoftonline.com/<AZURE_TENANT_ID>/oauth2/v2.0/token"
-CLIENT_ID="<AZURE_AD_APP_ID>"
-SCOPE="https://<WELLLINE_DNS_NAME>/user_impersonation"
+# <WELLLINE_URL> = The URL of the WellLine Application.
+
+# AUTH_URL="https://login.microsoftonline.com/<AZURE_TENANT_ID>/oauth2/v2.0/token"
+AUTH_URL="https://login.microsoftonline.com/76648a49-7e8a-4b11-9aed-e3852b2f4295/oauth2/v2.0/token"
+
+# CLIENT_ID="<AZURE_AD_APP_ID"
+CLIENT_ID="e7b90cf0-0783-46bc-aa6f-2869008551b9"
+
+# SCOPE="<WELLLINE_URL>/user_impersonation"
+SCOPE="https://training.wellline.com/user_impersonation"
 
 # THESE COME FROM THE USER AT RUNTIME
 USER_ID=""
