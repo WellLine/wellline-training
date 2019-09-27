@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# (C) 2019 Maana, Inc.
+
+# OUTPUT FORMATTING
+HEADER='\033[0;32m'
+WARNING='\033[0;31m'
+NC='\033[0m'
+
+# CONFIGURATION PARAMETERS
+# Need to replace the following placeholders:
+# <AZURE_TENANT_ID> = Azure AD Tenant ID you are authenticating against.
+# <AZURE_AD_APP_ID> = Azure AD Application ID you are authenticating against.
+# <WELLLINE_DNS_NAME> = The DNS name of the WellLine Application.
+AUTH_URL="https://login.microsoftonline.com/<AZURE_TENANT_ID>/oauth2/v2.0/token"
+CLIENT_ID="<AZURE_AD_APP_ID>"
+SCOPE="https://<WELLLINE_DNS_NAME>/user_impersonation"
+
+# THESE COME FROM THE USER AT RUNTIME
+USER_ID=""
+PASSWORD=""
+
+usage()
+{
+    echo "usage: getAuthToken [[[-u userid ] [-p password]] | [-h]]"
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -u | --userid )     shift
+                            USER_ID=$1
+                            ;;
+        -p | --password )   shift
+                            PASSWORD=$1
+                            ;;
+        -h | --help )       usage
+                            exit
+                            ;;
+        * )                 usage
+                            exit 1
+    esac
+    shift
+done
+
+# Validate the input
+if [ -z "$USER_ID" ]; then
+  read -p "User ID: " USER_ID
+fi
+if [ -z "$PASSWORD" ]; then
+  read -s -p "Password: " PASSWORD
+  echo
+fi
+
+echo -e "\n${HEADER}Getting TimeLine Service authenticaiton token for $USER_ID ....${NC}\n"
+
+curl -X POST $AUTH_URL \
+ -H 'Accept: application/json' \
+ -H 'Content-Type: application/x-www-form-urlencoded' \
+ -H 'cache-control: no-cache' \
+ -d "grant_type=password&client_id=$CLIENT_ID&scope=$SCOPE&username=$USER_ID&password=$PASSWORD"
+
