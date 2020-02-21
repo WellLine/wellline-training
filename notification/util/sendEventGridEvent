@@ -19,7 +19,7 @@ echo -e "\n${HEADER}Sending EventGrid Event.${NC}"
 curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-type: Notification' -d'
 {
   "id":"b6ee0afd-d594-4d3a-989f-a2837e215e3f",
-  "subject":"/arul/Event/1",
+  "subject":"/allen/Event/008cfce705cfcbc17ea6c63108e3269a",
   "eventType":"Event.created",
   "data": {
     "batchId":"",
@@ -32,22 +32,22 @@ curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-typ
 }
 '
 
-echo -e "\n${HEADER}Sending EventGrid Event.${NC}"
-curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-type: Notification' -d'
-{
-  "id":"b6ee0afd-d594-4d3a-989f-a2837e215e3f",
-  "subject":"/arul/Event/2",
-  "eventType":"Event.created",
-  "data": {
-    "batchId":"",
-    "agentId":"arul@wellline.com"
-  },
-  "eventTime":"2019-09-16T15:11:49.058Z",
-  "dataVersion":"1.0",
-  "metadataVersion":"1",
-  "topic":"/subscriptions/XXXXXXX/resourceGroups/YYYYYYYY/providers/Microsoft.EventGrid/topics/ZZZZZZ"
-}
-'
+# echo -e "\n${HEADER}Sending EventGrid Event.${NC}"
+# curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-type: Notification' -d'
+# {
+#   "id":"b6ee0afd-d594-4d3a-989f-a2837e215e3f",
+#   "subject":"/allen/event/2",
+#   "eventType":"event.created",
+#   "data": {
+#     "batchId":"",
+#     "agentId":"arul@wellline.com"
+#   },
+#   "eventTime":"2019-09-16T15:11:49.058Z",
+#   "dataVersion":"1.0",
+#   "metadataVersion":"1",
+#   "topic":"/subscriptions/XXXXXXX/resourceGroups/YYYYYYYY/providers/Microsoft.EventGrid/topics/ZZZZZZ"
+# }
+# '
 
 # echo -e "\n${HEADER}Sending EventGrid Event.${NC}"
 # curl -X POST "$AZ_EGF_URL" -H 'Content-Type: application/json' -H 'aeg-event-type: Notification' -d'
