@@ -5,6 +5,7 @@ import requests
 import datetime
 import azure.functions as func
 from .event_translator import event_translator
+from .timeline_svc import timeline_svc
 
 class bcolors:
   HEADER = '\033[95m'
@@ -16,134 +17,56 @@ class bcolors:
   BOLD = '\033[1m'
   UNDERLINE = '\033[4m'
 
-acceptTenantIds = ["allen", "arul"]
-acceptNotificationTypes = ["created", "updated"]
-timeline_svc_url = "http://dev-timeline.wellline.com/graphql"
+# JWT to authenticate against timeline service
 env_auth_token = os.getenv('TIMELINE_AUTH_TOKEN', '')
 
-# Translation Config
+# Configuration of notification subscriber
+notification_config = {
+  'tenant_ids': ["shell", "allen"],
+  'notification_types': ["created", "updated", "deleted"]
+}
+
+# Configuration to access source events
+src_timeline_svc_config = {
+  'url': "https://dev-timeline.wellline.com/graphql",
+  'auth_token': env_auth_token
+}
+
+# Configuration to publish translated events 
+dest_timeline_svc_config = {
+  "url": "https://dev-timeline.wellline.com/graphql",
+  "auth_token": env_auth_token
+}
+dest_tenant_id = "asea" 
+
+# Configuration for translation service 
 translatorConfig = {}
 
-# GraphQL Queries and Mutations
-getEventQuery = """
-    query($tenantId: ID!, $id: ID!) {
-      event(tenantId: $tenantId, id: $id) 
-      { id, content, links { uri, description, typeId }, properties { name, value}, quantities {unit, value}, measures { type { id, name, units }, value}, subjectEntityIds, referenceEntityIds }
-    }
-  """
+def parseEventGridEvent(event):
+  
+  notification = {}
 
-updateEventsMutation = """
-    mutation($tenantId: ID!, $batchId: ID, $input: [UpdateEventInput!]!, $eepConfig: EepConfigInput, $async: Boolean) {
-      updateEvents(tenantId: $tenantId, batchId: $batchId, input: $input, eepConfig: $eepConfig, async: $async)
-      { batchId, actionCount, validationErrorCount, indexErrorCount, submitted, duration, isAsync, actionResults { status, result, id, errors { type, reason } } }
-    }
-  """
+  event_type_parts = event.event_type.split(".")
+  notification["element_type"] = event_type_parts[0]
+  notification["notification_type"] = event_type_parts[1]
 
-addEventsMutation = """
-    mutation($tenantId: ID!, $batchId: ID, $input: [AddEventInput!]!, $eepConfig: EepConfigInput) {
-      addEvents(tenantId: $tenantId, batchId: $batchId, input: $input, eepConfig: $eepConfig)
-      { batchId, actionCount, duration, actionResults { status, result, id, errors { type, reason } } }
-    }
-  """
+  subject_parts = event.subject.split("/")
+  notification["tenant_id"] = subject_parts[1]
+  notification["element_id"] = subject_parts[3]
 
-def getEvent(tenantId, eventId):
-  headers = {"Authorization": "Bearer {}".format(env_auth_token)}
-  variables = {"tenantId": tenantId, "id": eventId}
+  return notification
 
-  # print(variables)
+def main(eventGridEvent: func.EventGridEvent):
 
-  response = requests.post(timeline_svc_url, json={'query': getEventQuery, 'variables': variables}, headers=headers)
-
-  if response.status_code == 200:
-    return response.json()["data"]["event"]
-  else:
-    print(bcolors.FAIL + "TimeLine Service call failed with code: {}".format(response.status_code) + bcolors.ENDC)
-    print(bcolors.BOLD + "Query:" + bcolors.ENDC)
-    print(getEventQuery)
-    try:
-      print(bcolors.BOLD + "GraphQL Errors ({}):".format(len(response.json()["errors"])) + bcolors.ENDC)
-      print(*response.json()["errors"], sep="\n")
-    except:
-      print(bcolors.BOLD + "Errors:" + bcolors.ENDC)
-      print(response.text)
-    exit()
-
-def updateEvents(tenantId, eventUpdates):
-
-  headers = {"Authorization": "Bearer {}".format(env_auth_token)}
-  variables = {"tenantId": tenantId, "input": eventUpdates}
-  # print(variables)
-
-  response = requests.post(timeline_svc_url, json={'query': updateEventsMutation, 'variables': variables}, headers=headers)
-  # print (response.text)
-
-  if response.status_code == 200:
-    return response.json()['data']
-  else:
-    print(bcolors.FAIL + "TimeLine Service call failed with code: {}".format(response.status_code) + bcolors.ENDC)
-    print(bcolors.BOLD + "Query:" + bcolors.ENDC)
-    print(getEventQuery)
-    try:
-      print(bcolors.BOLD + "GraphQL Errors ({}):".format(len(response.json()["errors"])) + bcolors.ENDC)
-      print(*response.json()["errors"], sep="\n")
-    except:
-      print(bcolors.BOLD + "Errors:" + bcolors.ENDC)
-      print(response.text)
-    exit()
-
-def addEvents(tenantId, eventsAdd):
-  headers = {"Authorization": "Bearer {}".format(env_auth_token)}
-
-  variables = {"tenantId": tenantId, "input": eventsAdd}
-
-  print ("*******************")
-  print(variables)
-  print ("*******************")
-  response = requests.post(timeline_svc_url, json={'query': addEventsMutation, 'variables': variables}, headers=headers)
-
-  # print (response.text)
-
-  if response.status_code == 200:
-    print (response.text)
-    return response.json()['data']
-  else:
-    print(bcolors.FAIL + "TimeLine Service call failed with code: {}".format(response.status_code) + bcolors.ENDC)
-    print(bcolors.BOLD + "Query:" + bcolors.ENDC)
-    print(getEventQuery)
-    try:
-      print(bcolors.BOLD + "GraphQL Errors ({}):".format(len(response.json()["errors"])) + bcolors.ENDC)
-      print(*response.json()["errors"], sep="\n")
-    except:
-      print(bcolors.BOLD + "Errors:" + bcolors.ENDC)
-      print(response.text)
-    exit()
-
-
-def main(notification: func.EventGridEvent):
-
-  notificationTypeParts = notification.event_type.split(".")
-  # print("******* notificationTypeParts: {}".format(notificationTypeParts))
-  elementType = notificationTypeParts[0]
-  # print("elementType: {}".format(elementType))
-  notificationType = notificationTypeParts[1]
-  # print("notificationType: {}".format(notificationType))
-
-  subjectParts = notification.subject.split("/")
-  # print("******* subjectParts: {}".format(subjectParts))
-  tenantId = subjectParts[1]
-  # print("tenantId: {}".format(tenantId))
-  elementId = subjectParts[3]
-  # print("eventId: {}".format(elementId))
+  notification = parseEventGridEvent(eventGridEvent)
+  print("Notification: {}".format(notification))
 
   # Ensure tenant is valid and the notification is an add/update event notification
-  if (tenantId in acceptTenantIds) and  (elementType == "Event") and notificationType in acceptNotificationTypes:    
-    print("Processing Event notification - tenantId:{}, notificationType:{}, id:{}".format(tenantId, notificationType, elementId))
+  if (notification["tenant_id"] in notification_config["tenant_ids"]) and (notification["element_type"] == "Event") and (notification["notification_type"] in notification_config["notification_types"]):    
+    print("Processing Event notification - tenant_id:{}, notification_type:{}, id:{}".format(notification["tenant_id"], notification["notification_type"], notification["element_id"]))
 
-    event = getEvent(tenantId, elementId)
-    print("event: {}".format(event))
-    # print("event.id: {}".format(event['id']))
-    # print("event.content: {}".format(event['content']))
-    # print("event.links: {}".format(event['links']))
+    event = timeline_svc.getEvent(src_timeline_svc_config, notification["tenant_id"], notification["element_id"])
+    print("Event: {}".format(event))
 
     if event:
       updateEvent = False
@@ -151,15 +74,15 @@ def main(notification: func.EventGridEvent):
 
       # eventAdd = []
 
-      eventUpdate = { "id": elementId, "addQuantities": [], "addMeasures": [], "addProperties": [], "addReferences": [], 
-      "deleteQuantities": [], "deleteMeasures": [], "deleteProperties": [], "deleteReferences": [] }
+      # eventUpdate = { "id": element_id, "addQuantities": [], "addMeasures": [], "addProperties": [], "addReferences": [], 
+      # "deleteQuantities": [], "deleteMeasures": [], "deleteProperties": [], "deleteReferences": [] }
 
       # Translate Event
-      new_event = event_translator(translatorConfig, event)
+      # new_event = event_translator.translate_event(translatorConfig, event)
 
-      if new_event:
-        addEvents(tenantId, [newEvent])
+      # if new_event:
+      #   addEvents(tenant_id, [new_event])
 
     else:
       # TODO: Log error
-      print("Unable to read Event - tenantId:{}, id:{}".format(tenantId, elementId))
+      print("Unable to read Event - tenant_id:{}, id:{}".format(tenant_id, element_id))
