@@ -66,27 +66,29 @@ def main(eventGridEvent: func.EventGridEvent):
   print("Notification: {}".format(notification))
 
   # Ensure tenant is valid and the notification is an add/update event notification
-  if (notification["tenant_id"] in notification_config["tenant_ids"]) and (notification["element_type"] == "Event") and (notification["notification_type"] in notification_config["notification_types"]):    
-    print("Processing Event notification - tenant_id:{}, notification_type:{}, id:{}".format(notification["tenant_id"], notification["notification_type"], notification["element_id"]))
+  if notification["tenant_id"] in notification_config["tenant_ids"]:
+    if notification["element_type"] == "Event":
+      if notification["notification_type"] in notification_config["notification_types"]:    
+        print("Processing Event notification - tenant_id:{}, notification_type:{}, id:{}".format(notification["tenant_id"], notification["notification_type"], notification["element_id"]))
 
-    event = timeline_svc.getEvent(src_timeline_svc_config, notification["tenant_id"], notification["element_id"])
-    print("Event: {}".format(event))
+        event = timeline_svc.getEvent(src_timeline_svc_config, notification["tenant_id"], notification["element_id"])
+        print("Event: {}".format(event))
 
-    if event:
-      # updateEvent = False
-      # addEvent = False
+        if event:
+          # updateEvent = False
+          # addEvent = False
 
-      # eventAdd = []
+          # eventAdd = []
 
-      # eventUpdate = { "id": element_id, "addQuantities": [], "addMeasures": [], "addProperties": [], "addReferences": [], 
-      # "deleteQuantities": [], "deleteMeasures": [], "deleteProperties": [], "deleteReferences": [] }
+          # eventUpdate = { "id": element_id, "addQuantities": [], "addMeasures": [], "addProperties": [], "addReferences": [], 
+          # "deleteQuantities": [], "deleteMeasures": [], "deleteProperties": [], "deleteReferences": [] }
 
-      # Translate Event
-      new_event = event_translator.translate_event(translator_config, event)
+          # Translate Event
+          new_event = event_translator.translate_event(translator_config, event)
 
-      # if new_event:
-      #   addEvents(tenant_id, [new_event])
+          # if new_event:
+          #   addEvents(tenant_id, [new_event])
 
-    else:
-      # TODO: Log error
-      print("Unable to read Event - tenant_id:{}, id:{}".format(notification["tenant_id"], notification["element_id"]))
+        else:
+          # TODO: Log error
+          print("Unable to read Event - tenant_id:{}, id:{}".format(notification["tenant_id"], notification["element_id"]))
