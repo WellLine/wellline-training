@@ -1,8 +1,4 @@
-import os
-import json
-import logging
-import requests
-import datetime
+import os, json, requests, datetime
 import azure.functions as func
 from .event_translator import event_translator
 from .timeline_svc import timeline_svc
@@ -40,7 +36,15 @@ dest_timeline_svc_config = {
 dest_tenant_id = "asea" 
 
 # Configuration for translation service 
-translatorConfig = {}
+# If you encounter any issues with the base_url or path, make sure
+# that you are using the latest endpoint: https://docs.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate
+translator_config = {
+  "subscription_key": "028b6721f9f84263ac6f0a2ac70ef617",
+  "url": "https://api.cognitive.microsofttranslator.com",
+  "path": '/translate?api-version=3.0',
+  "source_lang_id": 'en',
+  "target_lang_id": 'es'
+}
 
 def parseEventGridEvent(event):
   
@@ -69,8 +73,8 @@ def main(eventGridEvent: func.EventGridEvent):
     print("Event: {}".format(event))
 
     if event:
-      updateEvent = False
-      addEvent = False
+      # updateEvent = False
+      # addEvent = False
 
       # eventAdd = []
 
@@ -78,11 +82,11 @@ def main(eventGridEvent: func.EventGridEvent):
       # "deleteQuantities": [], "deleteMeasures": [], "deleteProperties": [], "deleteReferences": [] }
 
       # Translate Event
-      # new_event = event_translator.translate_event(translatorConfig, event)
+      new_event = event_translator.translate_event(translator_config, event)
 
       # if new_event:
       #   addEvents(tenant_id, [new_event])
 
     else:
       # TODO: Log error
-      print("Unable to read Event - tenant_id:{}, id:{}".format(tenant_id, element_id))
+      print("Unable to read Event - tenant_id:{}, id:{}".format(notification["tenant_id"], notification["element_id"]))
